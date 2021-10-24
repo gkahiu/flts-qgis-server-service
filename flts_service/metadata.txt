@@ -11,8 +11,8 @@ server=True
 author=John Kahiu
 email=gkahiu@gmail.com
 
-icon=images/qr_barcode.svg
-tags=qrcode, barcode, layout
+icon=service.png
+tags=flts, layout, service
 
 homepage=https://github.com/gkahiu/flts-qgis-server-service
 tracker=https://github.com/gkahiu/flts-qgis-server-service/issues
