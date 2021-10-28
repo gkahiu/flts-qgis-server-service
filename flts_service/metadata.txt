@@ -2,7 +2,7 @@
 name=FLTS Server Service Demo
 description=A sample QGIS service for processing custom requests to generate PDF layout-based documents.
 about=A sample QGIS Server plugin that exposes a custom service using simple query parameters to produces PDF documents based on layouts defined in the test QGS project files.
-category=Server
+category=Plugins
 qgisMinimumVersion=3.16
 qgisMaximumVersion=3.99
 version=0.1
@@ -11,8 +11,8 @@ server=True
 author=John Kahiu
 email=gkahiu@gmail.com
 
-icon=service.png
-tags=flts, layout, service
+icon=images/service.png
+tags=server, layout, service
 
 homepage=https://github.com/gkahiu/flts-qgis-server-service
 tracker=https://github.com/gkahiu/flts-qgis-server-service/issues

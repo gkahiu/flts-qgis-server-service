@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
-Name                 : FltsServicePluginLoader
-Description          : Loader for the demo FLTS QGIS Server service.
-Date                 : 24-10-2021
+Name                 : FltsUtils
+Description          : FLTS service utils
+Date                 : 26-10-2021
 copyright            : (C) 2021 by John Gitau
 email                : gkahiu@gmail.com
  ***************************************************************************/
@@ -17,24 +17,18 @@ email                : gkahiu@gmail.com
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import Qgis, QgsMessageLog
-from flts_service.core.service import FltsService
+import json
+from typing import Dict
+
+from qgis.server import QgsServerResponse
 
 
-class FltsServicePluginLoader:
-    """QGIS Server plugin loader."""
-
-    def __init__(self, server_iface):
-        """Constructor.
-
-        :param server_iface: An interface instance that exposes the QGIS
-        server interface.
-        :type server_iface: QgsServerInterface
-        """
-        # Register FLTS custom service
-        server_iface.serviceRegistry().registerService(
-            FltsService(server_iface)
-        )
-        QgsMessageLog.logMessage("Demo FLTS Service registered", 'flts', Qgis.Info)
-
-
+def write_json_response(
+        data:Dict[str, str],
+        response: QgsServerResponse,
+        code: int=200
+) -> None:
+    # Output server response to JSON
+    response.setStatusCode(code)
+    response.setHeader('Content-Type', 'application/json')
+    response.write(json.dumps(data))

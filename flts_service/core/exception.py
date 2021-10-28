@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
-Name                 : FltsServicePluginLoader
-Description          : Loader for the demo FLTS QGIS Server service.
-Date                 : 24-10-2021
+Name                 : FltsServiceException
+Description          : Service exception to be sent back to the client.
+Date                 : 26-10-2021
 copyright            : (C) 2021 by John Gitau
 email                : gkahiu@gmail.com
  ***************************************************************************/
@@ -17,24 +17,32 @@ email                : gkahiu@gmail.com
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import Qgis, QgsMessageLog
-from flts_service.core.service import FltsService
+from qgis.core import (
+    Qgis,
+    QgsMessageLog
+)
+from qgis.server import QgsServerResponse
+
+from flts_service.core.utils import (
+    write_json_response
+)
 
 
-class FltsServicePluginLoader:
-    """QGIS Server plugin loader."""
+class FltsServiceException(Exception):
+    """Write exception to server response in JSON format.
+    """
 
-    def __init__(self, server_iface):
-        """Constructor.
-
-        :param server_iface: An interface instance that exposes the QGIS
-        server interface.
-        :type server_iface: QgsServerInterface
-        """
-        # Register FLTS custom service
-        server_iface.serviceRegistry().registerService(
-            FltsService(server_iface)
+    def __init__(self, code: int, msg: str):
+        super().__init__(msg)
+        self.code = code
+        self.msg = msg
+        QgsMessageLog.logMessage(
+            'FLTS service error {0}: {1}'.format(code, msg),
+            level=Qgis.Critical
         )
-        QgsMessageLog.logMessage("Demo FLTS Service registered", 'flts', Qgis.Info)
 
-
+    def formatResponse(self, response: QgsServerResponse):
+        # Write exception to response object
+        body = {'status': 'error', 'message': self.msg}
+        response.clear()
+        write_json_response(body, response, self.code)

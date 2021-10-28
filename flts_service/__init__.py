@@ -19,14 +19,14 @@ email                : gkahiu@gmail.com
  *                                                                         *
  ***************************************************************************/
 """
-from .plugin import QRBarCodePluginLoader
 
 
 # noinspection PyPep8Naming
-def classFactory(iface):  # pylint: disable=invalid-name
+def serverClassFactory(iface):  # pylint: disable=invalid-name
     """Load the plugin loader class
 
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    return QRBarCodePluginLoader(iface)
+    from flts_service.plugin import FltsServicePluginLoader
+    return FltsServicePluginLoader(iface)
