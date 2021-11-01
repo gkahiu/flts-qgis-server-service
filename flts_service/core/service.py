@@ -97,7 +97,7 @@ class FltsService(QgsService):
                 )
             else:
                 # Handover request to the handler
-                handler.exec_request(flts_req, response)
+                handler.exec_request(flts_req, response, self)
 
         except FltsServiceException as fex:
             fex.formatResponse(response)

@@ -39,6 +39,7 @@ from qgis.server import (
 
 from flts_service.core.exception import FltsServiceException
 from flts_service.core.request import FltsServerRequest
+from flts_service.core.utils import write_json_response
 
 
 @dataclass
@@ -152,7 +153,8 @@ class BaseRequestHandler:
     def exec_request(
             self,
             request: FltsServerRequest,
-            response: 'QgsServerResponse'
+            response: 'QgsServerResponse',
+            service: 'QgsService'
     ):
         """
         Execute request sent by our custom service. Base implementation does
@@ -197,6 +199,28 @@ def render_document(
     return renderer.getPrint()
 
 
+class CapabilitiesHandler(BaseRequestHandler):
+    """Exposes FLTS service capabilities.
+    """
+    REQUEST_ID = "GetCapabilities"
+
+    def exec_request(
+            self,
+            request: FltsServerRequest,
+            response: 'QgsServerResponse',
+            service: 'QgsService'
+    ):
+        # Sample capabilities
+        info = {
+            'Name': service.name(),
+            'Version': service.version(),
+            'Description': 'Demo service for generating starter title...',
+            'Contact Person': 'John Gitau',
+            'Contact Organization': 'xxxx yyyy'
+        }
+        write_json_response(info, response, 200)
+
+
 class StarterRequestHandler(BaseRequestHandler):
     """Demo handler for simulating generation of starter certificates.
     """
@@ -205,7 +229,8 @@ class StarterRequestHandler(BaseRequestHandler):
     def exec_request(
             self,
             request: FltsServerRequest,
-            response: 'QgsServerResponse'
+            response: 'QgsServerResponse',
+            service: 'QgsService'
     ):
         # Generate starter title certificates
         template_id = request.template_id
