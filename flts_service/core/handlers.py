@@ -30,11 +30,8 @@ from qgis.core import (
     QgsProject
 )
 from qgis.server import (
-    QgsRenderer,
     QgsServerInterface,
-    QgsServerResponse,
-    QgsWmsRenderContext,
-    QgsWmsRequest
+    QgsServerResponse
 )
 
 from flts_service.core.exception import FltsServiceException
@@ -199,7 +196,7 @@ def render_document(
     return renderer.getPrint()
 
 
-class CapabilitiesHandler(BaseRequestHandler):
+class CapabilitiesRequestHandler(BaseRequestHandler):
     """Exposes FLTS service capabilities.
     """
     REQUEST_ID = "GetCapabilities"

@@ -7,6 +7,20 @@ It should not be used in a production environment as it should incorporate appro
 authorizing users, managing `*.qgs` project files (either in flat files or a PostgreSQL database), expose service capabilities, logging appropriate messages in the server, error handling and 
 returning appropriate messages to the client.
 
+## Parameters
+Parameters for the **FLTS** service include:
+
+| Parameter | Required | Description |
+|------------|---------|--------------|
+| REQUEST | Yes | Specific name of the request e.g. *GetStarterCert, GetCapabilities* |
+| VERSION | No | Version of the FLTS service |
+| TEMPLATE_ID | Yes | Name of the layout template in the QGIS project file |
+| QUERY | No | `0` to return only one document in PDF matching the first record found or `1` to return all documents in ZIP format |
+
+
+## Examples
+
+
 ## License
 `FLTS QGIS Server Service` is free software. You can redistribute it and/or modify it under the terms of the GNU General 
 Public License version 3 (GPLv3) as published by the Free Software Foundation. 
