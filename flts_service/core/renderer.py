@@ -95,16 +95,18 @@ class RendererContext:
         self._update_project_metadata()
 
     @staticmethod
-    def project_from_path(self, path: str) -> QgsProject:
-        # Project from the path and set project properties which will be
-        # cascaded to the pdf document.
+    def project_from_path(path: str) -> QgsProject:
+        # Create project from the path.
         if not QFile.exists(path):
             raise FltsServiceException(
                 404,
                 'Project file \'{0}\' not found.'.format(path)
             )
 
-        return QgsProject.instance().read(path)
+        # Load project
+        QgsProject.instance().read(path)
+
+        return QgsProject.instance()
 
     @property
     def naming(self) -> int:

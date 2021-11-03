@@ -184,7 +184,7 @@ class AbstractDocumentRequestHandler(BaseRequestHandler):
         )
         with ZipFile(archive_name, 'w') as archive:
             for file_name, temp_file in docs.items():
-                archive.write(temp_file, '{0}.pdf'.format(file_name))
+                archive.write(temp_file.fileName(), '{0}.pdf'.format(file_name))
 
         return archive_name
 
@@ -211,8 +211,7 @@ class AbstractDocumentRequestHandler(BaseRequestHandler):
 
         elif num_docs == 1:
             # Get first/only document in the collection
-            keys = docs.keys()
-            file_name = keys[0]
+            file_name = list(docs)[0]
             doc = docs[file_name]
             response.setHeader('Content-Type', 'application/pdf')
             response.write(doc.readAll())

@@ -39,9 +39,10 @@ class FltsServerRequest(QgsServerRequest):
 
     @property
     def template_id(self) -> str:
-        """Returns the template_id specified in the request.
+        """Returns the template_id specified in the request. This is case
+        sensitive.
         """
-        return self.parameters().get('TEMPLATE_ID', '').lower()
+        return self.parameters().get('TEMPLATE_ID', '')
 
     @property
     def query_count(self) -> int:
