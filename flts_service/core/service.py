@@ -48,7 +48,7 @@ class FltsService(QgsService):
         # Register request handlers and index by request_id
         handlers_cls = BaseRequestHandler.handlers
         for h in handlers_cls:
-            self._handlers[h.REQUEST_ID.lower()] = h(self._iface)
+            self._handlers[h.REQUEST_ID.lower()] = h(self._iface, self)
 
     @property
     def iface(self):
@@ -97,10 +97,11 @@ class FltsService(QgsService):
                 )
             else:
                 # Handover request to the handler
-                handler.exec_request(flts_req, response, self)
+                handler.exec_request(flts_req, response)
 
         except FltsServiceException as fex:
             fex.formatResponse(response)
+
         except Exception:
             code=500
             QgsMessageLog.logMessage(

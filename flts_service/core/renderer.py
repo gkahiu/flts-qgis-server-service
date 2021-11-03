@@ -17,7 +17,10 @@ email                : gkahiu@gmail.com
  *                                                                         *
  ***************************************************************************/
 """
-from typing import Union
+from typing import (
+    Union,
+    Tuple
+)
 
 from qgis.PyQt.QtCore import (
     QDateTime,
@@ -193,7 +196,7 @@ class FltsRenderer:
                     value = str(value)
                 item.setText(value)
 
-    def get_document(self) -> tuple(QgsLayoutExporter.ExportResult, QTemporaryFile):
+    def get_document(self) -> Tuple[QgsLayoutExporter.ExportResult, QTemporaryFile]:
         """Generate document and return tuple containing export result
         (success, failure etc.) and temporary file containing the document
         if the result was success.
