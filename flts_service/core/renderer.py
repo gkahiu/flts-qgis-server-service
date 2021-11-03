@@ -68,7 +68,7 @@ class RendererContext:
         self.proj_abstract = ''
 
         # Update project metadata
-        self._update_project_metadata()
+        self.update_project_metadata()
 
         self.document_dir = ''
 
@@ -78,7 +78,7 @@ class RendererContext:
         """
         return self._project
 
-    def _update_project_metadata(self):
+    def update_project_metadata(self):
         # Update based on context properties
         md = self._project.metadata()
         md.setTitle(self.proj_title)
@@ -92,7 +92,7 @@ class RendererContext:
         """Set project from path.
         """
         self._project = RendererContext.project_from_path(project_path)
-        self._update_project_metadata()
+        self.update_project_metadata()
 
     @staticmethod
     def project_from_path(path: str) -> QgsProject:
@@ -149,6 +149,7 @@ class FltsRenderer:
 
     def __init__(self, ctx: RendererContext):
         self._ctx = ctx
+        self._ctx.update_project_metadata()
 
     @property
     def context(self) -> RendererContext:
