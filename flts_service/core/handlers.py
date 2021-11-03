@@ -184,7 +184,10 @@ class AbstractDocumentRequestHandler(BaseRequestHandler):
         )
         with ZipFile(archive_name, 'w') as archive:
             for file_name, temp_file in docs.items():
-                archive.write(temp_file.fileName(), '{0}.pdf'.format(file_name))
+                archive.write(
+                    temp_file.fileName(),
+                    '{0}.pdf'.format(file_name)
+                )
 
         return archive_name
 
@@ -319,6 +322,6 @@ class StarterRequestHandler(AbstractDocumentRequestHandler):
                     )
                 )
 
-        response.clear()
+        # response.clear()
         self.send_documents(doc_files, response, doc_dir)
 
