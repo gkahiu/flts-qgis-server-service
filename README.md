@@ -14,11 +14,21 @@ Parameters for the **FLTS** service include:
 |------------|---------|--------------|
 | REQUEST | Yes | Specific name of the request e.g. *GetStarterCert, GetCapabilities* |
 | VERSION | No | Version of the FLTS service |
-| TEMPLATE_ID | Yes | Name of the layout template in the QGIS project file |
+| TEMPLATE_ID | Yes | Unique identifier of the QGIS project file (see supported test TEMPLATE_IDs [here](https://github.com/gkahiu/flts-qgis-server-service/blob/main/flts_service/core/handlers.py#L81) and [here](https://github.com/gkahiu/flts-qgis-server-service/blob/main/flts_service/core/handlers.py#L88)) |
 | QUERY | No | `0` to return only one document in PDF matching the first record found or `1` to return all documents in ZIP format |
 
 
 ## Examples
+* To get the capabilities supported by the FLTS service:
+`http://localhost:8090/cgi-bin/qgis_mapserv.fcgi.exe?SERVICE=FLTS&REQUEST=GetCapabilities`
+
+
+* To process one document and return it as a PDF file:
+`http://localhost:8090/cgi-bin/qgis_mapserv.fcgi.exe?SERVICE=FLTS&REQUEST=GetStarterCert&TEMPLATE_ID=86AB5327&QUERY=0`
+
+
+* To process multiple documents and return the package as a ZIP file
+`http://localhost:8090/cgi-bin/qgis_mapserv.fcgi.exe?SERVICE=FLTS&REQUEST=GetStarterCert&TEMPLATE_ID=86AB5327&QUERY=1`
 
 
 ## License
