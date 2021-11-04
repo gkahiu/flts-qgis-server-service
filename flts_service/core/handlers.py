@@ -31,6 +31,7 @@ from qgis.PyQt.QtCore import (
     QDateTime,
     QDir,
     QFile,
+    QFileInfo,
     QIODevice,
     QTemporaryFile
 )
@@ -178,19 +179,19 @@ class AbstractDocumentRequestHandler(BaseRequestHandler):
             temp_dir: str
     ) -> str:
         # Zip the documents and name archive using current date/time
-        archive_name = '{0}/{1}_archive_{2}.zip'.format(
+        archive_path = '{0}/{1}_archive_{2}.zip'.format(
             temp_dir,
             self.document_prefix,
             QDateTime.currentDateTime().toString('yyyyMMddhhmmss')
         )
-        with ZipFile(archive_name, 'w') as archive:
+        with ZipFile(archive_path, 'w') as archive:
             for file_name, temp_file in docs.items():
                 archive.write(
                     temp_file.fileName(),
                     '{0}.pdf'.format(file_name)
                 )
 
-        return archive_name
+        return archive_path
 
     def project_by_id(self, temp_id: str) -> ProjectInfo:
         """
@@ -198,6 +199,17 @@ class AbstractDocumentRequestHandler(BaseRequestHandler):
         based on specified ID registered in the our collection.
         """
         return self._projects.get(temp_id, None)
+
+    def set_content_disposition(
+            self,
+            response: QgsServerResponse,
+            file: QFile
+    ):
+        # Appends header to mark file as downloadable
+        fi = QFileInfo(file)
+        file_name = fi.fileName()
+        disp_value = 'attachment; filename={0}'.format(file_name)
+        response.setHeader('Content-Disposition', disp_value)
 
     def send_documents(
             self,
@@ -211,27 +223,28 @@ class AbstractDocumentRequestHandler(BaseRequestHandler):
             data = {'status': 'success', 'message': 'No documents processed'}
             write_json_response(data, response, 200)
 
-        elif num_docs == 1:
-            # Get first/only document in the collection
-            file_name = list(docs)[0]
-            doc = docs[file_name]
-            response.setStatusCode(200)
-            response.setHeader('Content-Type', 'application/pdf')
-            response.write(doc.readAll())
-
         else:
-            # Create archive
-            archive_path = self.create_archive(docs, temp_dir)
-            file = QFile(archive_path)
-            if not file.exists():
-                FltsServiceException(
-                    500,
-                    'Could not create document archive.'
-                )
-            if file.open(QIODevice.ReadOnly):
+            if num_docs == 1:
+                file_name = list(docs)[0]
+                doc = docs[file_name]
+                doc.rename('{0}.pdf'.format(file_name))
+                content_type = 'application/pdf'
+            else:
+                # Create archive
+                archive_path = self.create_archive(docs, temp_dir)
+                doc = QFile(archive_path)
+                if not doc.exists():
+                    FltsServiceException(
+                        500,
+                        'Could not create document archive.'
+                    )
+                content_type = 'application/zip'
+
+            if doc.open(QIODevice.ReadOnly):
                 response.setStatusCode(200)
-                response.setHeader('Content-Type', 'application/zip')
-                response.write(file.readAll())
+                self.set_content_disposition(response, doc)
+                response.setHeader('Content-Type', content_type)
+                response.write(doc.readAll())
             else:
                 FltsServiceException(
                     500,
@@ -329,6 +342,5 @@ class StarterRequestHandler(AbstractDocumentRequestHandler):
                     )
                 )
 
-        # response.clear()
         self.send_documents(doc_files, response, doc_dir)
 
