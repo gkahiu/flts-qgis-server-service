@@ -31,6 +31,7 @@ from qgis.PyQt.QtCore import (
     QDateTime,
     QDir,
     QFile,
+    QIODevice,
     QTemporaryFile
 )
 from qgis.core import (
@@ -210,12 +211,11 @@ class AbstractDocumentRequestHandler(BaseRequestHandler):
             data = {'status': 'success', 'message': 'No documents processed'}
             write_json_response(data, response, 200)
 
-            return
-
         elif num_docs == 1:
             # Get first/only document in the collection
             file_name = list(docs)[0]
             doc = docs[file_name]
+            response.setStatusCode(200)
             response.setHeader('Content-Type', 'application/pdf')
             response.write(doc.readAll())
 
@@ -228,8 +228,15 @@ class AbstractDocumentRequestHandler(BaseRequestHandler):
                     500,
                     'Could not create document archive.'
                 )
-            response.setHeader('Content-Type', 'application/zip')
-            response.write(file.readAll())
+            if file.open(QIODevice.ReadOnly):
+                response.setStatusCode(200)
+                response.setHeader('Content-Type', 'application/zip')
+                response.write(file.readAll())
+            else:
+                FltsServiceException(
+                    500,
+                    'Could not read document archive.'
+                )
 
 
 class CapabilitiesRequestHandler(BaseRequestHandler):
